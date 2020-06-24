@@ -1,7 +1,25 @@
-import React from "react";
+import React, { useState, useReducer } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import reducer from "../reducers/index";
+
+import Event from "./Event";
 
 const App = () => {
+  const [state, dispatch] = useReducer(reducer, []);
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+
+  const addEvent = (e) => {
+    e.preventDefault();
+    console.log({ title, body });
+    dispatch({
+      type: "CREATE_EVENT",
+      title,
+      body,
+    });
+    setTitle("");
+    setBody("");
+  };
   return (
     <div className="container-fluid">
       <h4>イベント作成フォーム</h4>
@@ -9,14 +27,28 @@ const App = () => {
         <div className="form-group">
           <label htmlFor="formEventTitle">タイトル</label>
           <br />
-          <input className="form-control" type="text" id="formEventTitle" />
+          <input
+            className="form-control"
+            type="text"
+            id="formEventTitle"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
         <div className="form-group">
           <label htmlFor="formEventBody">ボディー</label>
           <br />
-          <textarea className="form-control" type="text" id="formEventTitle" />
+          <textarea
+            className="form-control"
+            type="text"
+            id="formEventTitle"
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+          />
         </div>
-        <button className="btn btn-primary">イベントを作成する</button>
+        <button className="btn btn-primary" onClick={addEvent}>
+          イベントを作成する
+        </button>
         <button className="btn btn-danger">全てのイベントを削除する</button>
       </form>
       <h4>イベント一覧</h4>
@@ -29,7 +61,11 @@ const App = () => {
             <th></th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          {state.map((event, index) => (
+            <Event key={index} event={event} dispatch={dispatch} />
+          ))}
+        </tbody>
       </table>
     </div>
   );
